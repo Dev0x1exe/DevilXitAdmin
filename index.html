@@ -3,272 +3,792 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم Firebase</title>
+    <title>لوحة تحكم Firebase الاحترافية</title>
+    <!-- استخدام خط Cairo من جوجل -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #121212;
-            --card: #1e1e1e;
-            --text: #e0e0e0;
+            --bg: #0f0f13;
+            --surface: #1a1a24;
+            --surface-hover: #252533;
             --primary: #7c4dff;
+            --primary-hover: #5e35b1;
             --success: #00e676;
             --danger: #ff1744;
+            --warning: #ff9100;
+            --text: #e0e0e0;
+            --text-muted: #8a8a9e;
+            --border: #333344;
+            --radius: 12px;
         }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg);
             color: var(--text);
-            margin: 0;
             padding: 20px;
             direction: rtl;
+            line-height: 1.6;
         }
+
         .container {
-            max-width: 1200px;
-            margin: auto;
+            max-width: 1300px;
+            margin: 0 auto;
         }
-        h1, h2 { color: var(--primary); }
-        .card {
-            background: var(--card);
-            padding: 20px;
-            border-radius: 10px;
+
+        /* الترويسة */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #1e1e2f 0%, #12121a 100%);
+            padding: 20px 30px;
+            border-radius: var(--radius);
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* التبويبات */
+        .tabs {
+            display: flex;
+            gap: 10px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            flex-wrap: wrap;
         }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #333;
-            background: #2a2a2a;
-            color: white;
-            box-sizing: border-box;
-        }
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
+
+        .tab-btn {
+            background: var(--surface);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 12px 24px;
+            border-radius: var(--radius);
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 15px;
             transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+
+        .tab-btn:hover {
+            background: var(--surface-hover);
+            color: var(--text);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(124, 77, 255, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* البطاقات */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* الحقول */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: 0.3s;
+            width: 100%;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.2);
+        }
+
+        /* الأزرار */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: #5e35b1; }
+        .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
+        
+        .btn-success { background: var(--success); color: #000; }
+        .btn-success:hover:not(:disabled) { background: #00c853; }
+        
         .btn-danger { background: var(--danger); color: white; }
-        .btn-danger:hover { background: #d50000; }
+        .btn-danger:hover:not(:disabled) { background: #d50000; }
+        
+        .btn-warning { background: var(--warning); color: #000; }
+        .btn-warning:hover:not(:disabled) { background: #e65100; }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* الجداول */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            font-size: 13px;
         }
+
         th, td {
-            padding: 12px;
+            padding: 12px 15px;
             text-align: right;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
         }
-        th { background: #2a2a2a; }
-        tr:hover { background: #2a2a2a; }
-        .status-active { color: var(--success); font-weight: bold; }
-        .status-inactive { color: var(--danger); font-weight: bold; }
-        .search-box { margin-bottom: 15px; }
+
+        th {
+            background: var(--bg);
+            color: var(--text-muted);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background: var(--surface-hover);
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .status-active { background: rgba(0, 230, 118, 0.15); color: var(--success); }
+        .status-inactive { background: rgba(255, 23, 68, 0.15); color: var(--danger); }
+
+        /* أدوات إضافية */
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .search-box input {
+            flex: 1;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 12px 15px;
+            border-radius: 8px;
+        }
+
+        /* إشعار (Toast) */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--surface);
+            color: var(--text);
+            padding: 15px 25px;
+            border-radius: 8px;
+            border-right: 4px solid var(--success);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: 0.3s;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.error {
+            border-right-color: var(--danger);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .config-grid { grid-template-columns: 1fr; }
+            .header { flex-direction: column; gap: 10px; text-align: center; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>لوحة تحكم التطبيق (Firebase)</h1>
-
-    <!-- قسم إضافة مفتاح جديد -->
-    <div class="card">
-        <h2>إضافة مفتاح جديد (FIXAMODS_USERS)</h2>
-        <div class="form-group">
-            <label>اسم المفتاح (Key)</label>
-            <input type="text" id="newKey" placeholder="مثال: DEVILXIT">
+    <!-- الترويسة -->
+    <div class="header">
+        <h1>🛡️ لوحة التحكم Firebase</h1>
+        <div class="status">
+            <span class="status-dot"></span>
+            <span id="connectionStatus">متصل</span>
         </div>
-        <div class="form-group">
-            <label>اسم المستخدم</label>
-            <input type="text" id="newUsername" placeholder="اسم المستخدم">
-        </div>
-        <div class="form-group">
-            <label>مدة الصلاحية (بالأيام)</label>
-            <input type="number" id="newDays" value="30">
-        </div>
-        <div class="form-group">
-            <label>عدد الأجهزة المسموح بها</label>
-            <input type="number" id="newMaxDevices" value="1">
-        </div>
-        <button class="btn-primary" onclick="addKey()">إضافة المفتاح</button>
     </div>
 
-    <!-- قسم عرض المفاتيح -->
-    <div class="card">
-        <h2>المفاتيح الحالية (FIXAMODS_USERS)</h2>
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="ابحث عن مفتاح..." onkeyup="filterTable()">
+    <!-- التبويبات -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('tab-keys')">🔑 المفاتيح (FIXAMODS_USERS)</button>
+        <button class="tab-btn" onclick="switchTab('tab-config')">⚙️ إعدادات التطبيق (APP_CONFIG)</button>
+        <button class="tab-btn" onclick="switchTab('tab-logs')">📊 السجلات (ADMIN_ACTIVITY)</button>
+        <button class="tab-btn" onclick="switchTab('tab-raw')">🗄️ بيانات خام (JSON)</button>
+    </div>
+
+    <!-- تبويب المفاتيح -->
+    <div id="tab-keys" class="tab-content active">
+        <div class="card">
+            <div class="card-title">➕ إنشاء مفتاح جديد</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>اسم المفتاح (Key)</label>
+                    <input type="text" id="newKey" placeholder="مثال: FIXA-XXXX-XXXX">
+                </div>
+                <div class="form-group">
+                    <label>اسم المستخدم</label>
+                    <input type="text" id="newUsername" placeholder="اسم المستخدم">
+                </div>
+                <div class="form-group">
+                    <label>نوع الصلاحية</label>
+                    <select id="validityMode" onchange="toggleValidityInputs()">
+                        <option value="absolute">تاريخ مطلق (Absolute)</option>
+                        <option value="duration">مدة بعد أول تسجيل (Duration)</option>
+                    </select>
+                </div>
+                <div class="form-group" id="absDateGroup">
+                    <label>تاريخ الانتهاء</label>
+                    <input type="datetime-local" id="newValidityDate">
+                </div>
+                <div class="form-group" id="durGroup" style="display: none;">
+                    <label>المدة</label>
+                    <input type="number" id="newDurationValue" value="1" min="1">
+                </div>
+                <div class="form-group" id="durUnitGroup" style="display: none;">
+                    <label>الوحدة</label>
+                    <select id="newDurationUnit">
+                        <option value="hours">ساعات</option>
+                        <option value="days">أيام</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>عدد الأجهزة المسموح</label>
+                    <input type="number" id="newMaxDevices" value="1" min="1">
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="addKey()">🚀 إنشاء المفتاح</button>
         </div>
-        <table id="keysTable">
-            <thead>
-                <tr>
-                    <th>المفتاح</th>
-                    <th>المستخدم</th>
-                    <th>الحالة</th>
-                    <th>الصلاحية</th>
-                    <th>الأجهزة</th>
-                    <th>إجراءات</th>
-                </tr>
-            </thead>
-            <tbody id="keysBody">
-                <!-- سيتم تعبئتها عبر JS -->
-            </tbody>
-        </table>
+
+        <div class="card">
+            <div class="card-title">📋 قائمة المفاتيح</div>
+            <div class="search-box">
+                <input type="text" id="searchKeys" placeholder="ابحث بالاسم أو المفتاح..." onkeyup="renderKeys()">
+                <button class="btn btn-primary" onclick="loadKeys()">🔄 تحديث</button>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>المفتاح</th>
+                            <th>المستخدم</th>
+                            <th>الحالة</th>
+                            <th>الصلاحية</th>
+                            <th>الأجهزة</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="keysBody">
+                        <tr><td colspan="6" class="loading">جاري التحميل...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- تبويب إعدادات التطبيق -->
+    <div id="tab-config" class="tab-content">
+        <div class="card">
+            <div class="card-title">⚙️ APP_CONFIG</div>
+            <div class="config-grid">
+                <div class="form-group">
+                    <label>رابط قناة تيليجرام</label>
+                    <input type="text" id="cfgTelegram" placeholder="https://t.me/...">
+                </div>
+                <div class="form-group">
+                    <label>رابط شراء المفتاح</label>
+                    <input type="text" id="cfgBuyKey" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>وضع الصيانة (Maintenance)</label>
+                    <select id="cfgMaintenance">
+                        <option value="false">معطل (OFF)</option>
+                        <option value="true">مفعل (ON)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>التحديث الإجباري</label>
+                    <select id="cfgForceUpdate">
+                        <option value="false">معطل</option>
+                        <option value="true">مفعل</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>رابط التحديث</label>
+                    <input type="text" id="cfgUpdateUrl" placeholder="https://...">
+                </div>
+            </div>
+            <div style="margin-top: 20px;">
+                <button class="btn btn-success" onclick="saveConfig()">💾 حفظ الإعدادات</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- تبويب السجلات -->
+    <div id="tab-logs" class="tab-content">
+        <div class="card">
+            <div class="card-title">📊 سجل نشاطات الأدمن</div>
+            <div class="search-box">
+                <input type="text" id="searchLogs" placeholder="ابحث في السجلات..." onkeyup="renderLogs()">
+                <button class="btn btn-primary" onclick="loadLogs()">🔄 تحديث</button>
+            </div>
+            <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الوقت</th>
+                            <th>الأدمن</th>
+                            <th>الإجراء</th>
+                            <th>المفتاح</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsBody">
+                        <tr><td colspan="4" class="loading">جاري التحميل...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- تبويب البيانات الخام -->
+    <div id="tab-raw" class="tab-content">
+        <div class="card">
+            <div class="card-title">🗄️ بيانات JSON الخام</div>
+            <div class="form-group">
+                <label>اختر المسار (Path)</label>
+                <select id="rawPath" onchange="loadRawData()">
+                    <option value="FIXAMODS_USERS">FIXAMODS_USERS</option>
+                    <option value="APP_CONFIG">APP_CONFIG</option>
+                    <option value="ADMIN_ACTIVITY">ADMIN_ACTIVITY</option>
+                    <option value="config">config</option>
+                    <option value="keys">keys</option>
+                    <option value="">كامل القاعدة (ROOT)</option>
+                </select>
+            </div>
+            <textarea id="rawJson" style="width: 100%; height: 400px; background: var(--bg); border: 1px solid var(--border); color: var(--success); padding: 15px; border-radius: 8px; font-family: monospace; font-size: 12px;" readonly></textarea>
+            <div style="margin-top: 15px;">
+                <button class="btn btn-warning" onclick="loadRawData()">🔄 تحميل</button>
+            </div>
+        </div>
     </div>
 </div>
 
+<!-- إشعار -->
+<div id="toast" class="toast">تمت العملية بنجاح</div>
+
 <script>
-    // رابط قاعدة البيانات الخاص بك
-    const DB_URL = "https://nikhilkumarsharma-cc4e2-default-rtdb.firebaseio.com/FIXAMODS_USERS.json";
+    // ==========================================
+    // الإعدادات الأساسية
+    // ==========================================
+    const DB_BASE = "https://nikhilkumarsharma-cc4e2-default-rtdb.firebaseio.com";
+    
+    let keysData = {};
+    let logsData = {};
 
-    // جلب المفاتيح عند تحميل الصفحة
-    document.addEventListener("DOMContentLoaded", fetchKeys);
-
-    // دالة جلب المفاتيح
-    function fetchKeys() {
-        fetch(DB_URL)
-            .then(res => res.json())
-            .then(data => {
-                const tbody = document.getElementById("keysBody");
-                tbody.innerHTML = "";
-                
-                if (!data) return;
-
-                for (const [key, value] of Object.entries(data)) {
-                    const row = document.createElement("tr");
-                    
-                    // تحويل الحالة
-                    const statusClass = (value.status === "ACTIVE") ? "status-active" : "status-inactive";
-                    const statusText = value.status || "UNKNOWN";
-                    
-                    // تاريخ الصلاحية
-                    let validity = value.validity || "غير محدد";
-                    if (value.validityMode === "duration") {
-                        validity = `${value.durationValue || 0} ${value.durationUnit || 'ساعة'}`;
-                    }
-
-                    row.innerHTML = `
-                        <td><strong>${key}</strong></td>
-                        <td>${value.username || "---"}</td>
-                        <td class="${statusClass}">${statusText}</td>
-                        <td>${validity}</td>
-                        <td>${value.maxDevices || 1}</td>
-                        <td>
-                            <button class="btn-danger" onclick="deleteKey('${key}')">حذف</button>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                }
-            })
-            .catch(err => console.error("خطأ في الجلب:", err));
+    // ==========================================
+    // أدوات مساعدة
+    // ==========================================
+    function showToast(message, isError = false) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = 'toast show' + (isError ? ' error' : '');
+        setTimeout(() => { toast.className = 'toast'; }, 3000);
     }
 
-    // دالة إضافة مفتاح جديد
-    function addKey() {
-        const key = document.getElementById("newKey").value.trim();
-        const username = document.getElementById("newUsername").value.trim();
-        const days = parseInt(document.getElementById("newDays").value);
-        const maxDevices = parseInt(document.getElementById("newMaxDevices").value);
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+
+        // تحديث البيانات عند التبديل
+        if (tabId === 'tab-logs') loadLogs();
+        if (tabId === 'tab-raw') loadRawData();
+    }
+
+    function toggleValidityInputs() {
+        const mode = document.getElementById('validityMode').value;
+        document.getElementById('absDateGroup').style.display = mode === 'absolute' ? 'block' : 'none';
+        document.getElementById('durGroup').style.display = mode === 'duration' ? 'block' : 'none';
+        document.getElementById('durUnitGroup').style.display = mode === 'duration' ? 'block' : 'none';
+    }
+
+    // ==========================================
+    // إدارة المفاتيح (FIXAMODS_USERS)
+    // ==========================================
+    async function loadKeys() {
+        try {
+            const res = await fetch(`${DB_BASE}/FIXAMODS_USERS.json`);
+            keysData = await res.json() || {};
+            renderKeys();
+            document.getElementById('connectionStatus').textContent = 'متصل';
+        } catch (e) {
+            showToast('فشل الاتصال بقاعدة البيانات', true);
+            document.getElementById('connectionStatus').textContent = 'غير متصل';
+        }
+    }
+
+    function renderKeys() {
+        const search = document.getElementById('searchKeys').value.toLowerCase();
+        const tbody = document.getElementById('keysBody');
+        tbody.innerHTML = '';
+
+        let count = 0;
+        for (const [key, val] of Object.entries(keysData)) {
+            if (search && !key.toLowerCase().includes(search) && !(val.username || '').toLowerCase().includes(search)) continue;
+            
+            count++;
+            const isActive = val.status === 'ACTIVE';
+            const validity = val.validityMode === 'duration' 
+                ? `${val.durationValue} ${val.durationUnit}`
+                : (val.validity || '---');
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><strong>${key}</strong></td>
+                <td>${val.username || '---'}</td>
+                <td><span class="status-badge ${isActive ? 'status-active' : 'status-inactive'}">${val.status || 'UNKNOWN'}</span></td>
+                <td>${validity}</td>
+                <td>${val.maxDevices || 1}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm" onclick="deleteKey('${key}')">🗑️</button>
+                    <button class="btn btn-warning btn-sm" onclick="toggleKeyStatus('${key}', '${val.status}')">${isActive ? '⏸️' : '▶️'}</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        if (count === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="loading">لا توجد نتائج</td></tr>';
+        }
+    }
+
+    async function addKey() {
+        const key = document.getElementById('newKey').value.trim();
+        const username = document.getElementById('newUsername').value.trim();
+        const mode = document.getElementById('validityMode').value;
+        const maxDevices = parseInt(document.getElementById('newMaxDevices').value);
 
         if (!key || !username) {
-            alert("الرجاء إدخال اسم المفتاح واسم المستخدم!");
-            return;
+            return showToast('املأ جميع الحقول المطلوبة!', true);
         }
 
-        // حساب تاريخ الصلاحية (بصيغة dd-MM-yyyy HH:mm:ss كما يتوقعها التطبيق)
-        const now = new Date();
-        now.setDate(now.getDate() + days);
-        
-        const day = String(now.getDate()).padStart(2, '0');
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const year = now.getFullYear();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const seconds = String(now.getSeconds()).padStart(2, '0');
-        
-        const validityStr = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
-
-        const newData = {
-            "status": "ACTIVE",
-            "keyStatus": "ACTIVE",
-            "username": username,
-            "maxDevices": maxDevices,
-            "validityMode": "absolute",
-            "validity": validityStr,
-            "deviceId": "",
-            "deviceCount": 0,
-            "lastLogin": "",
-            "firstLogin": ""
+        const data = {
+            status: 'ACTIVE',
+            keyStatus: 'ACTIVE',
+            username: username,
+            maxDevices: maxDevices,
+            validityMode: mode,
+            deviceId: '',
+            deviceCount: 0,
+            lastLogin: '',
+            firstLogin: ''
         };
 
-        // رفع البيانات إلى Firebase
-        fetch(`https://nikhilkumarsharma-cc4e2-default-rtdb.firebaseio.com/FIXAMODS_USERS/${key}.json`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(newData)
-        })
-        .then(res => res.json())
-        .then(() => {
-            alert("✅ تم إضافة المفتاح بنجاح!");
-            document.getElementById("newKey").value = "";
-            document.getElementById("newUsername").value = "";
-            fetchKeys(); // تحديث الجدول
-        })
-        .catch(err => {
-            alert("❌ حدث خطأ أثناء الإضافة!");
-            console.error(err);
-        });
-    }
+        if (mode === 'absolute') {
+            const dateVal = document.getElementById('newValidityDate').value;
+            if (!dateVal) return showToast('اختر تاريخ الانتهاء!', true);
+            const d = new Date(dateVal);
+            // صيغة التطبيق: dd-MM-yyyy HH:mm:ss
+            data.validity = `${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:00`;
+        } else {
+            data.durationValue = parseInt(document.getElementById('newDurationValue').value);
+            data.durationUnit = document.getElementById('newDurationUnit').value;
+            data.validity = '';
+        }
 
-    // دالة حذف مفتاح
-    function deleteKey(key) {
-        if (!confirm(`هل أنت متأكد من حذف المفتاح "${key}"؟`)) return;
-
-        fetch(`https://nikhilkumarsharma-cc4e2-default-rtdb.firebaseio.com/FIXAMODS_USERS/${key}.json`, {
-            method: 'DELETE'
-        })
-        .then(() => {
-            alert("🗑️ تم الحذف بنجاح!");
-            fetchKeys();
-        })
-        .catch(err => {
-            alert("❌ حدث خطأ أثناء الحذف!");
-            console.error(err);
-        });
-    }
-
-    // دالة البحث في الجدول
-    function filterTable() {
-        const input = document.getElementById("searchInput").value.toUpperCase();
-        const rows = document.getElementById("keysBody").getElementsByTagName("tr");
-
-        for (let i = 0; i < rows.length; i++) {
-            const cells = rows[i].getElementsByTagName("td");
-            let match = false;
-            for (let j = 0; j < cells.length; j++) {
-                if (cells[j].innerText.toUpperCase().includes(input)) {
-                    match = true;
-                    break;
-                }
+        try {
+            const res = await fetch(`${DB_BASE}/FIXAMODS_USERS/${key}.json`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                showToast('✅ تم إنشاء المفتاح بنجاح!');
+                document.getElementById('newKey').value = '';
+                document.getElementById('newUsername').value = '';
+                loadKeys();
+            } else {
+                showToast('❌ فشل إنشاء المفتاح', true);
             }
-            rows[i].style.display = match ? "" : "none";
+        } catch (e) {
+            showToast('خطأ في الاتصال', true);
         }
     }
+
+    async function deleteKey(key) {
+        if (!confirm(`هل تريد حذف المفتاح "${key}"؟`)) return;
+        try {
+            await fetch(`${DB_BASE}/FIXAMODS_USERS/${key}.json`, { method: 'DELETE' });
+            showToast('🗑️ تم الحذف');
+            loadKeys();
+        } catch (e) {
+            showToast('فشل الحذف', true);
+        }
+    }
+
+    async function toggleKeyStatus(key, currentStatus) {
+        const newStatus = currentStatus === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+        try {
+            await fetch(`${DB_BASE}/FIXAMODS_USERS/${key}/status.json`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newStatus)
+            });
+            showToast(`تم تغيير الحالة إلى ${newStatus}`);
+            loadKeys();
+        } catch (e) {
+            showToast('فشل تغيير الحالة', true);
+        }
+    }
+
+    // ==========================================
+    // إعدادات التطبيق (APP_CONFIG)
+    // ==========================================
+    async function loadConfig() {
+        try {
+            const res = await fetch(`${DB_BASE}/APP_CONFIG.json`);
+            const data = await res.json() || {};
+            
+            document.getElementById('cfgTelegram').value = data.telegram_channel_url || '';
+            document.getElementById('cfgBuyKey').value = data.buy_key_telegram_url || '';
+            document.getElementById('cfgMaintenance').value = (data.maintenance && data.maintenance.enabled) ? 'true' : 'false';
+            document.getElementById('cfgForceUpdate').value = (data.update && data.update.forceUpdate) ? 'true' : 'false';
+            document.getElementById('cfgUpdateUrl').value = (data.update && data.update.downloadUrl) || '';
+        } catch (e) {
+            showToast('فشل تحميل الإعدادات', true);
+        }
+    }
+
+    async function saveConfig() {
+        const config = {
+            telegram_channel_url: document.getElementById('cfgTelegram').value,
+            buy_key_telegram_url: document.getElementById('cfgBuyKey').value,
+            maintenance: {
+                enabled: document.getElementById('cfgMaintenance').value === 'true',
+                message: "Please try again",
+                title: "UNDER MAINTENANCE"
+            },
+            update: {
+                forceUpdate: document.getElementById('cfgForceUpdate').value === 'true',
+                downloadUrl: document.getElementById('cfgUpdateUrl').value,
+                message: "A new version is available.",
+                title: "UPDATE AVAILABLE"
+            }
+        };
+
+        try {
+            const res = await fetch(`${DB_BASE}/APP_CONFIG.json`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(config)
+            });
+            if (res.ok) showToast('💾 تم الحفظ!');
+            else showToast('فشل الحفظ', true);
+        } catch (e) {
+            showToast('خطأ في الاتصال', true);
+        }
+    }
+
+    // ==========================================
+    // السجلات (ADMIN_ACTIVITY)
+    // ==========================================
+    async function loadLogs() {
+        try {
+            const res = await fetch(`${DB_BASE}/ADMIN_ACTIVITY.json`);
+            logsData = await res.json() || {};
+            renderLogs();
+        } catch (e) {
+            showToast('فشل تحميل السجلات', true);
+        }
+    }
+
+    function renderLogs() {
+        const search = document.getElementById('searchLogs').value.toLowerCase();
+        const tbody = document.getElementById('logsBody');
+        tbody.innerHTML = '';
+
+        // تحويل الكائن إلى مصفوفة وترتيبه حسب الوقت
+        const logsArray = Object.values(logsData).sort((a, b) => new Date(b.time) - new Date(a.time));
+        
+        let count = 0;
+        for (const log of logsArray) {
+            if (search && !JSON.stringify(log).toLowerCase().includes(search)) continue;
+            
+            count++;
+            if (count > 200) break; // حد أقصى 200 سجل
+
+            const date = new Date(log.time).toLocaleString('ar-EG');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${date}</td>
+                <td>${log.admin || '---'}</td>
+                <td>${log.action || '---'}</td>
+                <td><strong>${log.key || '---'}</strong></td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        if (count === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="loading">لا توجد سجلات</td></tr>';
+        }
+    }
+
+    // ==========================================
+    // البيانات الخام (RAW)
+    // ==========================================
+    async function loadRawData() {
+        const path = document.getElementById('rawPath').value;
+        try {
+            const res = await fetch(`${DB_BASE}/${path}.json`);
+            const data = await res.json();
+            document.getElementById('rawJson').value = JSON.stringify(data, null, 2);
+        } catch (e) {
+            document.getElementById('rawJson').value = 'فشل تحميل البيانات';
+        }
+    }
+
+    // ==========================================
+    // التهيئة الأولية
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+        loadKeys();
+        loadConfig();
+    });
 </script>
 
 </body>
